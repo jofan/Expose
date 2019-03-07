@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 
+topdir=$(pwd)
+scriptdir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
 # configuration
+
+# Source configuration file if it exists in the project directory
+if [ -f "$topdir/_config.sh" ]; then
+  . "$topdir/_config.sh"
+fi
 
 site_title=${site_title:-"My Awesome Photos"}
 
@@ -25,7 +33,7 @@ video_formats=(h264 vp8)
 
 bitrate=(40 24 12 7 4 2)
 
-bitrate_maxratio=2 # a multiple of target bitrate to get max bitrate for VBR encoding. must be > 1. Higher ratio gives better quality on scenes with lots of movement. Ratio=1 reduces to CBR encoding
+bitrate_maxratio=${bitrate_maxratio:-2} # a multiple of target bitrate to get max bitrate for VBR encoding. must be > 1. Higher ratio gives better quality on scenes with lots of movement. Ratio=1 reduces to CBR encoding
 
 disable_audio=${disable_audio:-true}
 
@@ -36,7 +44,7 @@ backgroundcolor=${backgroundcolor:-"#000000"} # slide background, visible only b
 textcolor=${textcolor:-"#ffffff"} # default text color
 
 # palette of 7 colors, background to foreground, to be used if color extraction is disabled
-default_palette=("#000000" "#222222" "#444444" "#666666" "#999999" "#cccccc" "#ffffff")
+default_palette=${default_palette:-("#000000" "#222222" "#444444" "#666666" "#999999" "#cccccc" "#ffffff")}
 
 override_textcolor=${override_textcolor:-true} # use given text color instead of extracted palette on body text.
 
@@ -55,8 +63,8 @@ disqus_shortname=${disqus_shortname:-""}
 # arbitrary list of extensions we'll assume are video files.
 video_extensions=(3g2 3gp 3gp2 asf avi dvr-ms exr ffindex ffpreset flv gxf h261 h263 h264 h265 ifv m2t m2ts mts m4v mkv mod mov mp4 mpg mxf tod vob webm wmv y4m)
 
-sequence_keyword="imagesequence" # if a directory name contains this keyword, treat it as an image sequence and compile it into a video
-sequence_framerate=24 # sequence framerate
+sequence_keyword=${sequence_keyword:-"imagesequence"} # if a directory name contains this keyword, treat it as an image sequence and compile it into a video
+sequence_framerate=${sequence_framerate:-24} # sequence framerat
 
 # specific codec options here
 h264_encodespeed=${h264_encodespeed:-"veryslow"} # h264 encode speed, slower produces better compression results. Options are ultrafast,superfast, veryfast, faster, fast, medium, slow, slower, veryslow
@@ -71,9 +79,6 @@ command -v identify >/dev/null 2>&1 || { echo "ImageMagick is a required depende
 
 # file extensions for each video format
 video_format_extensions=("h264" "mp4" "h265" "mp4" "vp9" "webm" "vp8" "webm" "ogv" "ogv")
-
-topdir=$(pwd)
-scriptdir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 draft=false
 # the -d flag has been set
